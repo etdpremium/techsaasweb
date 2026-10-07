@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "techsaasweb",
+  "account_id": "fd37cbb5c77d0f679a1d63f7fc71062a",
   "compatibility_date": "2025-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "main": "./.open-next/worker.js",
@@ -12,7 +13,7 @@
     {
       "binding": "DB",
       "database_name": "techsaasweb-db",
-      "database_id": "ISI_DATABASE_ID_DARI_Wrangler"
+      "database_id": "f7fd20e7-34ca-416c-a69e-9a14a5f2e6de"
     }
   ],
   "observability": {

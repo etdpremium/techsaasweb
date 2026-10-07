@@ -11,3 +11,6 @@ dist/
 
 # OpenNext build output (generated, bukan source)
 .open-next/
+
+# Wrangler local state
+.wrangler/
