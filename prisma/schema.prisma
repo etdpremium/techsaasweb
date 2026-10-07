@@ -1,0 +1,103 @@
+// TechSaaSWeb v2 — full stack schema
+// Dev: SQLite file  |  Prod target: Cloudflare D1 (mirror via prisma-client-d1)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String   // bcrypt hash
+  role      String   @default("client") // client | admin
+  company   String?
+  phone     String?
+  createdAt DateTime @default(now())
+  leads     Lead[]
+  orders    Order[]
+  contacts  Contact[]
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  tenant    String   @default("global") // demo slug or "global"
+  name      String
+  contact   String   // WhatsApp / email
+  note      String?
+  source    String   @default("chat") // chat | form | contact
+  status    String   @default("new")  // new | contacted | qualified | won | lost
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  plan      String?
+  message   String
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Subscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+// Artikel blog — dibaca publik, dikelola dari /admin.
+model Post {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  title     String
+  excerpt   String
+  category  String
+  lang      String   @default("id") // id | en
+  date      String
+  read      String
+  thumb     String
+  body      String   // markdown-lite: ##, -, >, ```
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  planId    String   // hemat | bisnis | automasi
+  planName  String
+  price     Int      // monthly USD
+  billing   String   @default("monthly") // monthly | annual
+  status    String   @default("new") // new | building | launched | cancelled
+  brief     String?  // niche, domain, notes (JSON string)
+  createdAt DateTime @default(now())
+}
+
+model ChatLog {
+  id        String   @id @default(cuid())
+  tenant    String   @default("global")
+  message   String
+  reply     String
+  mode      String   // ai | cached | form
+  model     String?
+  createdAt DateTime @default(now())
+}
+
+// Balasan siap pakai milik owner (canned responses) — prioritas atas aturan MD.
+model CannedResponse {
+  id        String   @id @default(cuid())
+  keyword   String   // pola dipisah |, awalan = = cocok persis
+  reply     String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

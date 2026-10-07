@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <!-- Subtle isometric PCB / circuit grid — opacity handled via CSS (10-15%) -->
+  <g stroke="rgba(0,242,254,0.9)" stroke-width="0.7" fill="none" opacity="1">
+    <!-- horizontal -->
+    <line x1="0" y1="60" x2="800" y2="60"/><line x1="0" y1="140" x2="800" y2="140"/><line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="300" x2="800" y2="300"/><line x1="0" y1="380" x2="800" y2="380"/><line x1="0" y1="460" x2="800" y2="460"/><line x1="0" y1="540" x2="800" y2="540"/>
+    <!-- vertical -->
+    <line x1="80" y1="0" x2="80" y2="600"/><line x1="200" y1="0" x2="200" y2="600"/><line x1="320" y1="0" x2="320" y2="600"/>
+    <line x1="440" y1="0" x2="440" y2="600"/><line x1="560" y1="0" x2="560" y2="600"/><line x1="680" y1="0" x2="680" y2="600"/>
+    <!-- diagonal isometric hints -->
+    <path d="M0 120 L120 60 L240 120 L360 60 L480 120 L600 60 L720 120"/>
+    <path d="M0 300 L120 240 L240 300 L360 240 L480 300"/>
+    <!-- nodes -->
+    <circle cx="80" cy="60" r="3.5" fill="rgba(0,242,254,0.9)" stroke="none"/>
+    <circle cx="200" cy="140" r="3.5" fill="rgba(0,242,254,0.9)" stroke="none"/>
+    <circle cx="440" cy="220" r="3.5" fill="rgba(0,242,254,0.9)" stroke="none"/>
+    <circle cx="560" cy="380" r="3.5" fill="rgba(0,242,254,0.9)" stroke="none"/>
+    <rect x="314" y="134" width="12" height="12" rx="2" fill="none" stroke="rgba(0,242,254,0.9)"/>
+    <rect x="434" y="214" width="12" height="12" rx="2" fill="none" stroke="rgba(0,242,254,0.9)"/>
+  </g>
+</svg>

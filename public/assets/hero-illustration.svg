@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" role="presentation">
+  <defs>
+    <!-- base wash: biru muda → putih → biru sangat muda, diagonal lembut -->
+    <linearGradient id="ha-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"  stop-color="#F4F8FF"/>
+      <stop offset="42%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E8F0FE"/>
+    </linearGradient>
+    <!-- sembur biru kanan-atas -->
+    <radialGradient id="ha-blue" cx="72%" cy="12%" r="78%">
+      <stop offset="0%"   stop-color="#93C5FD" stop-opacity="0.55"/>
+      <stop offset="55%"  stop-color="#DBEAFE" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#DBEAFE" stop-opacity="0"/>
+    </radialGradient>
+    <!-- sembur biru tua kiri-bawah -->
+    <radialGradient id="ha-deep" cx="18%" cy="88%" r="70%">
+      <stop offset="0%"   stop-color="#1E3A8A" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#1E3A8A" stop-opacity="0"/>
+    </radialGradient>
+    <!-- sembur mint tipis (aksen, diatur sangat rendah supaya tetap netral) -->
+    <radialGradient id="ha-mint" cx="88%" cy="76%" r="52%">
+      <stop offset="0%"   stop-color="#0D9488" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#0D9488" stop-opacity="0"/>
+    </radialGradient>
+    <!-- pita cahaya diagonal -->
+    <linearGradient id="ha-sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="45%"  stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="ha-soft" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="70"/>
+    </filter>
+    <filter id="ha-sheen-blur" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+  </defs>
+
+  <!-- base + 3 sembur warna yang blur saling membaur -->
+  <rect width="1200" height="900" fill="url(#ha-bg)"/>
+  <g filter="url(#ha-soft)">
+    <ellipse cx="880" cy="150"  rx="520" ry="420" fill="url(#ha-blue)"/>
+    <ellipse cx="180" cy="800"  rx="460" ry="380" fill="url(#ha-deep)"/>
+    <ellipse cx="1040" cy="700" rx="360" ry="300" fill="url(#ha-mint)"/>
+    <ellipse cx="300" cy="180"  rx="340" ry="260" fill="#FFFFFF" opacity="0.5"/>
+  </g>
+
+  <!-- pita cahaya diagonal lebar, sangat lembut -->
+  <polygon points="300,-80 760,-80 380,980 -80,980" fill="url(#ha-sheen)" filter="url(#ha-sheen-blur)"/>
+</svg>
