@@ -4,3 +4,10 @@ dist/
 .env
 .next/
 .hermes/
+
+# Database lokal — data sensitif (login admin). Pakai D1 di production.
+*.db
+*.db-journal
+
+# OpenNext build output (generated, bukan source)
+.open-next/

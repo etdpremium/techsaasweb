@@ -5,9 +5,13 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "build:worker": "npx @opennextjs/cloudflare build",
+    "deploy": "npx @opennextjs/cloudflare build && npx wrangler deploy",
+    "preview": "npx @opennextjs/cloudflare build && npx wrangler dev"
   },
   "dependencies": {
+    "@prisma/adapter-d1": "^7.10.0",
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^1.48.0",
@@ -15,5 +19,9 @@
     "prisma": "^6.19.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.9",
+    "wrangler": "^4.148.0"
   }
 }
