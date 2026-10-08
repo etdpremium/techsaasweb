@@ -20,7 +20,7 @@ export async function POST(req) {
   const ada = await db.select({ id: Lead.id }).from(Lead).where(eq(Lead.contact, lead.contact)).limit(1);
   if (ada[0]) return NextResponse.json({ ok: true, id: ada[0].id, duplicate: true });
   const user = await currentUser();
-  const rec = await db.insert(Lead).values({ ...lead, userId: user?.id || null }).returning();
+  const rec = await db.insert(Lead).values({ id: crypto.randomUUID(), ...lead, userId: user?.id || null }).returning();
   return NextResponse.json({ ok: true, id: rec[0].id });
 }
 

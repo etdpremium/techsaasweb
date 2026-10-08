@@ -16,11 +16,11 @@ export async function POST(req) {
     return NextResponse.json({ ok: false, error: 'Nama, email, dan pesan wajib diisi.' }, { status: 400 });
   const user = await currentUser();
   const rec = await db.insert(Contact)
-    .values({ name, email, plan, message, userId: user?.id || null })
+    .values({ id: crypto.randomUUID(), name, email, plan, message, userId: user?.id || null })
     .returning();
   // sinkron jadi lead biar masuk pipeline dashboard
   await db.insert(Lead)
-    .values({ tenant: 'global', name, contact: phone || email, note: `contact: ${plan} — ${message.slice(0, 120)}`, source: 'contact', userId: user?.id || null })
+    .values({ id: crypto.randomUUID(), tenant: 'global', name, contact: phone || email, note: `contact: ${plan} — ${message.slice(0, 120)}`, source: 'contact', userId: user?.id || null })
     .catch(() => {});
   return NextResponse.json({ ok: true, id: rec[0].id });
 }

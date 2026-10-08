@@ -23,7 +23,7 @@ export async function POST(req) {
   const keyword = String(body.keyword || '').slice(0, 200).trim();
   const reply = String(body.reply || '').slice(0, 500).trim();
   if (!keyword || !reply) return NextResponse.json({ ok: false, error: 'Keyword dan balasan wajib diisi.' }, { status: 400 });
-  const item = await db.insert(CannedResponse).values({ keyword, reply }).returning();
+  const item = await db.insert(CannedResponse).values({ id: crypto.randomUUID(), keyword, reply }).returning();
   return NextResponse.json({ ok: true, item: item[0] });
 }
 

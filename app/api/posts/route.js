@@ -25,6 +25,7 @@ export async function POST(req) {
   const body = String(b.body || '').trim();
   if (!slug || !title || !body) return NextResponse.json({ ok: false, error: 'Slug, judul, dan isi wajib.' }, { status: 400 });
   const item = await db.insert(Post).values({
+      id: crypto.randomUUID(),
       slug,
       title,
       excerpt: String(b.excerpt || '').trim().slice(0, 220) || title,

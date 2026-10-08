@@ -14,7 +14,7 @@ export async function POST(req) {
   // upsert manual (D1 SQLite belum support ON CONFLICT di Drizzle 0.45 secara bersih)
   const ada = await db.select({ id: Subscriber.id }).from(Subscriber).where(eq(Subscriber.email, e)).limit(1);
   if (!ada[0]) {
-    await db.insert(Subscriber).values({ email: e }).catch(() => {});
+    await db.insert(Subscriber).values({ id: crypto.randomUUID(), email: e }).catch(() => {});
   }
   return NextResponse.json({ ok: true });
 }

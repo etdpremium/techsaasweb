@@ -25,6 +25,7 @@ export async function POST(req) {
   const isCustom = tier.price == null;
 
   const order = await db.insert(Order).values({
+    id: crypto.randomUUID(),
     userId: user.id,
     planId: tier.id,
     planName: tier.name,
@@ -35,6 +36,7 @@ export async function POST(req) {
 
   // sinkron jadi lead
   await db.insert(Lead).values({
+    id: crypto.randomUUID(),
     tenant: 'global',
     name: user.name,
     contact: user.email,

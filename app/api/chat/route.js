@@ -440,6 +440,7 @@ export async function POST(req) {
   if (isInjection(clean)) {
     const safe = `Maaf, permintaan itu tidak bisa saya proses. Kalau ada yang ingin ditanyakan soal website atau paket, silakan — atau hubungi langsung: ${KONTAK}.`;
     await db.insert(ChatLog).values({
+      id: crypto.randomUUID(),
       tenant: tenant || 'global', message: clean.slice(0, 200), reply: safe, mode: 'blocked',
     }).catch(() => {});
     return NextResponse.json({ mode: 'form', reply: safe });
@@ -468,6 +469,7 @@ export async function POST(req) {
       });
     }
     await db.insert(Lead).values({
+      id: crypto.randomUUID(),
       tenant: tenant || 'global', name: lead.name, contact: lead.phone, note: 'auto-capture chat', source: 'chat',
     }).catch(() => {});
     const personal = lead.name !== '(dari chat)' ? `Siap ${lead.name}! ` : '';
@@ -550,6 +552,7 @@ export async function POST(req) {
   if (!reply) {
     const fallback = `Terima kasih atas pertanyaannya — tim kami balas dalam 5 menit. Atau hubungi langsung: ${KONTAK}.`;
     await db.insert(ChatLog).values({
+      id: crypto.randomUUID(),
       tenant: tenant || 'global', message: clean, reply: fallback, mode: 'form',
     }).catch(() => {});
     return NextResponse.json({ mode: 'form', reply: fallback, error: String(lastErr?.message || lastErr) });
@@ -557,6 +560,7 @@ export async function POST(req) {
 
   if (demo) faqCache.set(`${tenant}|${clean.toLowerCase()}`, reply);
   await db.insert(ChatLog).values({
+    id: crypto.randomUUID(),
     tenant: tenant || 'global', message: clean, reply, mode: modelUsed ? 'ai' : 'cached', model: modelUsed,
   }).catch(() => {});
 

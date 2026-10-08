@@ -195,21 +195,6 @@ export default function Contact() {
             <li>Kami rawat, Anda layani pelanggan</li>
           </ol>
         </div>
-        <div className="m-card flat" style={{ marginTop: '1.5rem', fontSize: '.9rem' }}>
-          <strong>Sudah termasuk di semua paket</strong>
-          <ul style={{ margin: '.5rem 0 0', paddingLeft: '1.2rem' }}>
-            <li>Domain .com atau .id untuk tahun pertama</li>
-            <li>Hosting edge global + SSL otomatis</li>
-            <li>Proteksi DDoS &amp; firewall</li>
-            <li>Statistik pengunjung tanpa banner cookie</li>
-          </ul>
-        </div>
-        <div className="m-card flat" style={{ marginTop: '1.5rem', fontSize: '.9rem' }}>
-          <strong>Metode pembayaran</strong>
-          <ul style={{ margin: '.5rem 0 0', paddingLeft: '1.2rem' }}>
-            {TERMS.paymentMethods.map((m) => <li key={m}>{m}</li>)}
-          </ul>
-        </div>
       </Reveal>
     </main>
   );
