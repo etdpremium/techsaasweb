@@ -112,10 +112,7 @@ function ContactForm() {
 
   return (
       <Reveal className="m-card">
-      <h1 style={{ marginBottom: '.4rem' }}>Pesan website untuk usaha Anda</h1>
-      <p className="muted" style={{ fontSize: '.9rem', marginBottom: '1.2rem' }}>
-        Konsultasi gratis. Kami bilang paket mana yang cocok — atau kalau Anda sebaiknya tidak beli.
-      </p>
+      <h3 style={{ marginBottom: '1rem', fontSize: '1.15rem' }}>Isi data pemesanan</h3>
       {err && <div className="form-err">{err}</div>}
       {demoFromUrl && (
         <div className="m-card flat" style={{ background: 'var(--panel2)', fontSize: '.88rem' }}>
@@ -175,11 +172,17 @@ function ContactForm() {
 
 export default function Contact() {
   return (
-    <main className="wrap grid2" style={{ paddingTop: '2.6rem', maxWidth: 1100, alignItems: 'start' }}>
+    <main className="wrap grid2 booking-grid" style={{ paddingTop: '2.6rem', maxWidth: 1100, alignItems: 'start' }}>
       <Suspense fallback={<div className="m-card"><h2>Memuat...</h2></div>}>
         <ContactForm />
       </Suspense>
       <Reveal>
+        <div>
+          <h1 style={{ fontSize: '1.6rem', lineHeight: 1.2, marginBottom: '.55rem' }}>Pesan website untuk usaha Anda</h1>
+          <p className="muted" style={{ fontSize: '.9rem', marginBottom: '1.2rem' }}>
+            Konsultasi gratis. Kami bilang paket mana yang cocok — atau kalau Anda sebaiknya tidak beli.
+          </p>
+        </div>
         <div className="m-card flat" style={{ fontSize: '.9rem' }}>
           <strong>Cara kerjanya — 7 langkah:</strong>
           <ol style={{ margin: '.6rem 0 0', paddingLeft: '1.2rem' }}>
@@ -191,6 +194,21 @@ export default function Contact() {
             <li>Video pelatihan + serah terima</li>
             <li>Kami rawat, Anda layani pelanggan</li>
           </ol>
+        </div>
+        <div className="m-card flat" style={{ marginTop: '1.5rem', fontSize: '.9rem' }}>
+          <strong>Sudah termasuk di semua paket</strong>
+          <ul style={{ margin: '.5rem 0 0', paddingLeft: '1.2rem' }}>
+            <li>Domain .com atau .id untuk tahun pertama</li>
+            <li>Hosting edge global + SSL otomatis</li>
+            <li>Proteksi DDoS &amp; firewall</li>
+            <li>Statistik pengunjung tanpa banner cookie</li>
+          </ul>
+        </div>
+        <div className="m-card flat" style={{ marginTop: '1.5rem', fontSize: '.9rem' }}>
+          <strong>Metode pembayaran</strong>
+          <ul style={{ margin: '.5rem 0 0', paddingLeft: '1.2rem' }}>
+            {TERMS.paymentMethods.map((m) => <li key={m}>{m}</li>)}
+          </ul>
         </div>
       </Reveal>
     </main>

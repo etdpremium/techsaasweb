@@ -170,7 +170,7 @@ export default async function AdminPage({ searchParams }) {
       <Reveal className="m-card" style={{ marginTop: '1.2rem' }}>
         <div className="row-between" style={{ marginBottom: '.6rem', flexWrap: 'wrap', gap: '.6rem' }}>
           <div>
-            <h3 style={{ margin: 0 }}>Log percakapan ({totalChats})</h3>
+            <h3 style={{ margin: 0 }}>Log percakapan ({totalChatNum})</h3>
             <p className="admin-hint">Arsip semua chat untuk evaluasi jawaban bot. Saring per mode atau cari kata.</p>
           </div>
           <div className="row" style={{ gap: '.5rem', flexWrap: 'wrap' }}>

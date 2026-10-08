@@ -139,6 +139,12 @@ label.fl { display: block; font-size: .82rem; font-weight: 600; color: var(--ink
 .panel-soft { background: var(--panel2); border-radius: 20px; padding: 2rem; }
 @media (max-width: 700px) { .panel-peach, .panel-soft { padding: 1.3rem; border-radius: 14px; } }
 
+/* ---- booking: layout 2 kolom & hierarki judul ---- */
+@media (min-width: 700px) {
+  .booking-grid { grid-template-columns: 1.15fr .85fr; align-items: start; }
+  .booking-grid > .reveal:last-child { position: sticky; top: 1.5rem; }
+}
+
 /* ---- grids ---- */
 .grid2 { display: grid; gap: 1.5rem; grid-template-columns: 1fr; }
 .grid3 { display: grid; gap: 1.4rem; grid-template-columns: 1fr; }
