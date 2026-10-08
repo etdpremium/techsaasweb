@@ -1,4 +1,5 @@
 import { demos } from '../lib/demos';
+import { CITIES } from '../lib/lokasi';
 import Image from 'next/image';
 import Reveal from '../components/Reveal';
 import HeroArt from '../components/HeroArt';
@@ -11,8 +12,8 @@ import { Zap, MessageSquare, CalendarCheck, BarChart3, Globe, ShieldCheck, Check
 import { juta } from '../lib/format';
 
 export const metadata = {
-  title: 'Jasa Pembuatan Website Profesional + CS AI Otomatis',
-  description: 'Kami membuatkan website sesuai usaha Anda — dengan opsi CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari.',
+  title: 'Jasa Pembuatan Website Murah + Chatbot CS AI Otomatis',
+  description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari, mulai Rp 1,2 juta.',
   alternates: { canonical: '/' },
 };
 
@@ -56,6 +57,48 @@ const FEATURES = [
   { ico: ShieldCheck, n: '06', t: 'Jujur & terbuka', d: 'Semua yang termasuk ditulis terbuka. Tidak ada biaya uang muka yang membebankan pelanggan.' },
 ];
 
+/* Kota & blog yang ditautkan dari homepage — distribusi link equity dari
+   halaman terkuat ke 86 halaman yang sebelumnya tidak dapat link sama sekali. */
+const KOTA_UTAMA = new Set([
+  'jakarta', 'bogor', 'depok', 'tangerang', 'bekasi',
+  'bandung', 'semarang', 'solo', 'jogja', 'surabaya',
+  'malang', 'denpasar', 'medan', 'palembang', 'makassar', 'balikpapan',
+]);
+const KOTA_TEASER = CITIES.filter((c) => KOTA_UTAMA.has(c.slug));
+const KOTA_LAIN = CITIES.filter((c) => !KOTA_UTAMA.has(c.slug)).slice(0, 14);
+const BLOG_TEASER = [
+  {
+    slug: 'harga-jasa-website-komponen-jujur',
+    title: 'Harga Jasa Website: Bongkar Komponen Biayanya',
+    excerpt: 'Domain, hosting, desain, maintenance — apa yang wajar Anda bayar dan mana yang markup.',
+  },
+  {
+    slug: 'seo-lokal-jasa-kota',
+    title: 'SEO Lokal: Cara Muncul di "Jasa X + Kota Anda"',
+    excerpt: '5 fondasi agar pencarian "jasa service AC Bandung" yang muncul adalah website Anda.',
+  },
+  {
+    slug: 'chatbot-rule-based-vs-ai-umkm',
+    title: 'Chatbot Rule-Based vs AI: Mana yang Cocok untuk UMKM?',
+    excerpt: 'Tombol klik-klik atau AI yang paham bahasa? Pilih yang tidak menyiksa pelanggan Anda.',
+  },
+  {
+    slug: 'kecepatan-website-pagepeed-umkm',
+    title: 'Kecepatan Website & PageSpeed: Panduan Praktis UMKM',
+    excerpt: 'Cara membaca skor PageSpeed dengan benar dan 6 perbaikan tercepat tanpa coding.',
+  },
+  {
+    slug: 'google-business-profile-15-menit',
+    title: 'Lengkapi Google Business Profile dalam 15 Menit',
+    excerpt: 'Checklist profil Google yang membuat usaha Anda muncul di Maps saat dicari "terdekat".',
+  },
+  {
+    slug: 'domain-com-vs-id-bisnis',
+    title: 'Domain .com vs .id: Mana yang Tepat untuk Bisnis Anda?',
+    excerpt: 'Harga, syarat dokumen, dan kesan pelanggan — perbandingan jujur .com vs .id.',
+  },
+];
+
 export default function Home() {
   return (
     <main className="wrap">
@@ -63,11 +106,12 @@ export default function Home() {
       {/* HERO — seimbang: website custom terjangkau + CS otomatis, tanpa angka 24/7, tanpa harga */}
       <section className="hero">
         <div>
-          <span className="kicker">Jasa website & CS otomatis</span>
-          <h1>Website custom murah dengan <span className="hl">CS otomatis</span></h1>
+          <span className="kicker">Jasa pembuatan website + chatbot CS</span>
+          <h1>Jasa Pembuatan Website Murah dengan <span className="hl">Chatbot CS Otomatis</span></h1>
           <p className="lead">
-            Dipercaya puluhan pemilik usaha: website custom 8–15 halaman,
-            gratis domain tahun pertama, dan CS otomatis yang tidak pernah tidur.
+            Website custom 8–15 halaman untuk usaha Anda, gratis domain tahun
+            pertama, plus chatbot CS AI otomatis yang menjawab pelanggan setiap
+            hari. Online 3–14 hari, mulai Rp 1,2 juta sekali bayar.
           </p>
           <div className="hero-ctas">
             <a href="/services" className="m-btn">Lihat Layanan</a>
@@ -156,12 +200,19 @@ export default function Home() {
         </div>
         <div className="shot-grid">
           {demos.map((d, i) => {
-            const src = SHOTS[d.slug] || `https://picsum.photos/seed/tsw-${d.slug}-hero/1200/750`;
+            const src = SHOTS[d.slug];
             return (
               <Reveal key={d.slug} delay={(i % 3) * 90}>
                 <a href={`/demos/${d.slug}`} className="shot-card">
                   <div className="shot-frame">
-                    <img src={src} alt={`Contoh website ${d.niche} — ${d.name}`} width={653} height={874} loading="lazy" />
+                    <img
+                      src={src}
+                      width={820}
+                      height={1094}
+                      alt={`Contoh website ${d.niche} — ${d.name}`}
+                      loading={i < 3 ? 'eager' : 'lazy'}
+                      decoding="async"
+                    />
                     <span className="shot-tag">{d.niche}</span>
                   </div>
                   <div className="shot-cap">
@@ -203,6 +254,33 @@ export default function Home() {
         <WallOfLove />
       </Reveal>
 
+      <Reveal as="section" className="section" id="lokasi">
+        <div className="sec-head center">
+          <span className="kicker">Lokasi</span>
+          <h2>Jasa pembuatan website untuk kota Anda</h2>
+          <p>Seluruh proses online, tapi halaman tiap kota berisi info lokal spesifik: area, jangkauan, dan contoh usaha di kota tersebut.</p>
+        </div>
+        <div className="loc-grid">
+          {KOTA_TEASER.map((c) => (
+            <a key={c.slug} href={`/jasa-website/${c.slug}`} className="loc-card">
+              <span className="loc-name">{c.kota}</span>
+              <span className="loc-sub">{c.provinsi}</span>
+              <span className="loc-go">Website di {c.kota}</span>
+            </a>
+          ))}
+        </div>
+        <p className="loc-more">
+          Lihat juga:{' '}
+          {KOTA_LAIN.map((c, i) => (
+            <span key={c.slug}>
+              <a href={`/jasa-website/${c.slug}`}>{c.kota}</a>
+              {i < KOTA_LAIN.length - 1 ? ' · ' : ''}
+            </span>
+          ))}
+          {' '}— <a href="/jasa-website">semua {CITIES.length} kota</a>.
+        </p>
+      </Reveal>
+
       <Reveal as="section" className="section faq-sec">
         <div className="sec-head center">
           <span className="kicker">FAQ</span>
@@ -210,6 +288,23 @@ export default function Home() {
           <p>Jawaban singkat untuk hal yang paling sering ditanyakan calon pelanggan.</p>
         </div>
         <Faq />
+      </Reveal>
+
+      <Reveal as="section" className="section" id="artikel">
+        <div className="sec-head center">
+          <span className="kicker">Blog</span>
+          <h2>Pelajari website &amp; AI sebelum memesan</h2>
+          <p>Panduan singkat untuk pemilik usaha: dari harga jasa website, SEO lokal, sampai memilih chatbot.</p>
+        </div>
+        <div className="loc-grid">
+          {BLOG_TEASER.map((b) => (
+            <a key={b.slug} href={`/blog/${b.slug}`} className="loc-card">
+              <span className="loc-name">{b.title}</span>
+              <span className="loc-sub">{b.excerpt}</span>
+              <span className="loc-go">Baca artikel</span>
+            </a>
+          ))}
+        </div>
       </Reveal>
 
       <Reveal as="section">

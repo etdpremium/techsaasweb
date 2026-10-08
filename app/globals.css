@@ -1055,3 +1055,26 @@ table.compare td:first-child { font-weight: 600; color: var(--ink); }
 .dark-card:hover { box-shadow: var(--shadow-lg); }
 
 @media print { .nav-shell, footer, #tsw-bubble, #tsw-panel { display: none !important; } body { background: #fff; } }
+
+/* ---- lokasi & artikel grid (homepage): link equity ke /jasa-website/* & /blog/* ---- */
+.loc-grid { display: grid; gap: .8rem; grid-template-columns: 1fr; margin-top: 1.4rem; }
+@media (min-width: 640px) { .loc-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .loc-grid { grid-template-columns: repeat(4, 1fr); } }
+.loc-card {
+  display: flex; flex-direction: column; gap: .25rem;
+  padding: .85rem .95rem;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow); text-decoration: none; color: inherit;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.loc-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
+.loc-name { font-weight: 700; font-size: .96rem; color: var(--ink); }
+.loc-sub { font-size: .82rem; color: var(--muted); line-height: 1.4; }
+.loc-go {
+  margin-top: .3rem; font-size: .82rem; font-weight: 700; color: var(--primary);
+  display: inline-flex; align-items: center; gap: .3rem;
+}
+.loc-card:hover .loc-go { text-decoration: underline; }
+.loc-more { margin: 1.1rem 0 0; font-size: .88rem; color: var(--muted); line-height: 1.7; }
+.loc-more a { color: var(--primary); font-weight: 600; text-decoration: none; }
+.loc-more a:hover { text-decoration: underline; }
