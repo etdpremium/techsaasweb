@@ -111,7 +111,7 @@ function ContactForm() {
   }
 
   return (
-      <Reveal className="m-card">
+      <div className="m-card">
       <h3 style={{ marginBottom: '1rem', fontSize: '1.15rem' }}>Isi data pemesanan</h3>
       {err && <div className="form-err">{err}</div>}
       {demoFromUrl && (
@@ -166,7 +166,7 @@ function ContactForm() {
           {busy ? 'Mengirim...' : 'Kirim — balasan dalam 24 jam'}
         </button>
       </form>
-    </Reveal>
+    </div>
   );
 }
 
@@ -176,12 +176,22 @@ export default function Contact() {
       <Suspense fallback={<div className="m-card"><h2>Memuat...</h2></div>}>
         <ContactForm />
       </Suspense>
-      <Reveal>
+      <div>
         <div>
           <h1 style={{ fontSize: '1.6rem', lineHeight: 1.2, marginBottom: '.55rem' }}>Pesan website untuk usaha Anda</h1>
           <p className="muted" style={{ fontSize: '.9rem', marginBottom: '1.2rem' }}>
             Konsultasi gratis. Kami bilang paket mana yang cocok — atau kalau Anda sebaiknya tidak beli.
           </p>
+        </div>
+        <div className="m-card flat" style={{ fontSize: '.9rem', marginBottom: '1.2rem' }}>
+          <strong>Apa yang Anda dapat</strong>
+          <ul style={{ margin: '.6rem 0 0', paddingLeft: '1.2rem' }}>
+            <li>Konsultasi gratis — kami bilang paket mana yang cocok, atau kalau Anda sebaiknya tidak beli.</li>
+            <li>Website custom 8–15 halaman, bukan template pasaran, dirancang sesuai jenis usaha Anda.</li>
+            <li>Domain .com/.id gratis tahun pertama, hosting cepat, dan SSL sudah termasuk.</li>
+            <li>CS AI otomatis untuk menjawab pertanyaan pelanggan, serta booking otomatis bila dipakai.</li>
+            <li>Revisi sepuasnya sampai cocok, video pelatihan, dan serah terima yang jelas.</li>
+          </ul>
         </div>
         <div className="m-card flat" style={{ fontSize: '.9rem' }}>
           <strong>Cara kerjanya — 7 langkah:</strong>
@@ -195,7 +205,7 @@ export default function Contact() {
             <li>Kami rawat, Anda layani pelanggan</li>
           </ol>
         </div>
-      </Reveal>
+      </div>
     </main>
   );
 }

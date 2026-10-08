@@ -11,7 +11,7 @@ export default function Footer() {
     <footer>
       <div className="footer-grid">
         <div>
-          <h4>TechSaaSWeb</h4>
+          <p className="footer-brand">TechSaaSWeb</p>
           <p>Website custom dan CS AI otomatis yang kami buatkan untuk usaha Anda. Domain dan pembuatan sudah termasuk, online 3–14 hari.</p>
           <div className="footer-social">
             <a href="#" aria-label="X">𝕏</a>
@@ -20,7 +20,7 @@ export default function Footer() {
           </div>
         </div>
         <div>
-          <h4>Layanan</h4>
+          <p className="footer-h">Layanan</p>
           <a href="/services">Website custom</a>
           <a href="/services">CS AI otomatis</a>
           <a href="/dashboard">Panel pemilik</a>
@@ -28,27 +28,27 @@ export default function Footer() {
           <a href="/jasa-website">Jasa pembuatan website</a>
         </div>
         <div>
-          <h4>Bandingkan</h4>
+          <p className="footer-h">Bandingkan</p>
           <a href="/pricing">Harga paket</a>
           <a href="/pricing">Starter & Business</a>
           <a href="/pricing">Automation custom</a>
         </div>
         <div>
-          <h4>Contoh website</h4>
+          <p className="footer-h">Contoh website</p>
           <a href="/demos/klinik">Klinik gigi</a>
           <a href="/demos/properti">Properti</a>
           <a href="/demos/resto">Restoran</a>
           <a href="/demos/ecommerce">Toko online</a>
         </div>
         <div>
-          <h4>Paket</h4>
+          <p className="footer-h">Paket</p>
           <a href="/pricing">Starter {juta(tiers[0].price)}</a>
           <a href="/pricing">Business {juta(tiers[1].price)}</a>
           <a href="/pricing">Automation hubungi kami</a>
           <a href="/booking">Pemesanan</a>
         </div>
         <div>
-          <h4>Company</h4>
+          <p className="footer-h">Company</p>
           <a href="/blog">Blog</a>
           <a href="/login">Log in</a>
           <a href="/booking">Get started</a>

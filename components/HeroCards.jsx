@@ -47,7 +47,7 @@ export function CrmCard() {
         ))}
       </div>
       <div className="hsm-main">
-        <h4>CRM PERFORMANCE</h4>
+        <p className="hsm-label">CRM PERFORMANCE</p>
         <div className="hsm-top">
           <div className="hsm-sales">
             <span>Sales Overview</span>

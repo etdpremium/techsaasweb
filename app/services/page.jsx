@@ -1,6 +1,6 @@
 export const metadata = {
-  title: 'Fitur Lengkap: Website, Domain, SEO, CS AI, Booking Otomatis',
-  description: 'Detail fitur lengkap: website custom 8–15 halaman, domain .com/.id gratis, hosting cepat, SSL, SEO dasar, CS AI otomatis, booking otomatis & panel pemilik — semuanya sudah tersedia.',
+  title: 'Fitur: Website, Domain, SEO, CS AI, Booking',
+  description: 'Website custom, domain .com/.id, hosting, SSL, SEO dasar, CS AI, dan booking otomatis — semua dalam satu paket.',
   alternates: { canonical: '/services' },
 };
 import Reveal from '../../components/Reveal';

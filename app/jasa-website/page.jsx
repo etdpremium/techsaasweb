@@ -2,9 +2,9 @@ import { CITIES } from '../../lib/lokasi';
 import Reveal from '../../components/Reveal';
 
 export const metadata = {
-  title: 'Jasa Pembuatan Website di Seluruh Indonesia | TechSaaSWeb',
+  title: 'Jasa Pembuatan Website di Seluruh Indonesia',
   description:
-    'Jasa pembuatan website di seluruh Indonesia: website custom 8–15 halaman, CS AI otomatis, domain gratis tahun pertama, online 3–14 hari. Pilih kota Anda untuk info lengkap.',
+    'Website custom + CS AI untuk UMKM Indonesia. Domain, hosting, SSL termasuk — online 3–14 hari. Pilih kota Anda.',
   alternates: { canonical: '/jasa-website' },
 };
 
@@ -40,7 +40,7 @@ export default function JasaWebsiteIndex() {
       <div className="grid3" style={{ marginTop: '1.6rem' }}>
         {GROUPS.map((g) => (
           <Reveal key={g.provinsi} className="m-card flat prov-card">
-            <h3>{g.provinsi}</h3>
+            <h2>{g.provinsi}</h2>
             <div className="prov-links">
               {g.items.map((c) => (
                 <a key={c.slug} href={`/jasa-website/${c.slug}`}>

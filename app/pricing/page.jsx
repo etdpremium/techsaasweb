@@ -9,7 +9,7 @@ export default function Pricing() {
     <main className="wrap" style={{ paddingTop: '2.4rem' }}>
       <Reveal className="sec-head center">
         <span className="kicker">Harga</span>
-        <h2>Harga jelas — pembuatan &amp; domain termasuk</h2>
+        <h1>Harga jelas — pembuatan &amp; domain termasuk</h1>
         <p>Tanpa biaya tersembunyi. Domain .com/.id, hosting, SSL, dan semua infrastruktur sudah termasuk. Perpanjangan tahun ke-2 paket Starter &amp; Business cukup setengah harga.</p>
       </Reveal>
 
@@ -54,7 +54,7 @@ export default function Pricing() {
       </div>
 
       <Reveal className="m-card" style={{ marginTop: '2rem' }}>
-        <h3 style={{ marginBottom: '.8rem' }}>Kenapa paket kami ringan di kantong</h3>
+        <h2 style={{ marginBottom: '.8rem' }}>Kenapa paket kami ringan di kantong</h2>
         <div className="grid3">
           {[
             'Online 3–14 hari',
@@ -73,7 +73,7 @@ export default function Pricing() {
       </Reveal>
 
       <Reveal className="m-card" style={{ marginTop: '2rem' }}>
-        <h3 style={{ marginBottom: '.8rem' }}>Bandingkan paket berdampingan</h3>
+        <h2 style={{ marginBottom: '.8rem' }}>Bandingkan paket berdampingan</h2>
         <div className="tbl-wrap">
           <table className="compare">
             <thead>

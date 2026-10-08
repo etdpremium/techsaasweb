@@ -14,8 +14,8 @@ export async function generateMetadata({ params }) {
   if (!c) return {};
   const nama = c.slug === 'jogja' ? 'Jogja' : c.kota;
   return {
-    title: `Jasa Pembuatan Website di ${nama} — Website Custom + CS AI | TechSaaSWeb`,
-    description: `Jasa pembuatan website di ${nama}, ${c.provinsi}: website custom 8–15 halaman, CS AI otomatis, domain gratis tahun pertama, online 3–14 hari. Seluruh proses online.`,
+    title: `Website di ${nama} — Custom + CS AI`,
+    description: `Website custom + CS AI di ${nama}, ${c.provinsi}. Domain & hosting gratis, online 3–14 hari, proses sepenuhnya online.`,
     alternates: { canonical: `/jasa-website/${c.slug}` },
   };
 }

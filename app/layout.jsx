@@ -41,6 +41,11 @@ const ORG_JSONLD = {
   description: 'Jasa pembuatan website custom dan CS AI otomatis untuk UMKM Indonesia.',
   areaServed: 'Indonesia',
   priceRange: 'Rp 1.200.000+/tahun',
+  // TODO: isi sameAs dengan profil yang benar-benar dimiliki — ini sinyal
+  // entitas paling berdampak untuk AI answer engines (audit docs/10).
+  sameAs: [
+    'https://wa.me/6285113294575',
+  ],
 };
 
 const SITE_JSONLD = {

@@ -5,8 +5,8 @@ import Reveal from '../../components/Reveal';
 import BlogFilter from './filter';
 
 export const metadata = {
-  title: 'Blog — Tips Website untuk Bisnis, SEO Lokal & CS Otomatis',
-  description: 'Panduan praktis untuk pemilik bisnis: tips website yang menjual, SEO lokal agar ditemukan di Google, CS otomatis untuk melayani pelanggan, dan hitungan harga yang jujur.',
+  title: 'Blog — Tips Website, SEO Lokal & CS Otomatis',
+  description: 'Tips website untuk bisnis: website yang menjual, SEO lokal, CS otomatis, dan harga yang jujur.',
   alternates: { canonical: '/blog' },
 };
 
@@ -73,7 +73,7 @@ export default async function Blog({ searchParams }) {
     <main className="wrap" style={{ paddingTop: '2.4rem' }}>
       <Reveal className="sec-head center">
         <span className="kicker">Blog & Berita</span>
-        <h2>Info dan berita seputar teknologi</h2>
+        <h1>Info dan berita seputar teknologi</h1>
         <p>Tutorial, kabar teknologi, dan panduan praktis — dalam Bahasa Indonesia dan English.</p>
       </Reveal>
 
@@ -100,7 +100,7 @@ export default async function Blog({ searchParams }) {
                   <span>{p.date} · {p.read}</span>
                   <span className="tag dark">{p.lang === 'id' ? 'ID' : 'EN'}</span>
                 </div>
-                <h3>{p.title}</h3>
+                <h2>{p.title}</h2>
                 <p>{p.excerpt}</p>
                 <span className="blog-more">Baca artikel →</span>
               </div>
