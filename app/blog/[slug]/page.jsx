@@ -14,8 +14,12 @@ export async function generateMetadata({ params }) {
   const p = rows[0];
   if (!p) return {};
   return {
-    title: p.title,
-    description: p.excerpt,
+    // title artikel sudah spesifik + panjang; suffix "| TechSaaSWeb"
+    // (template layout) menambah 14 char dan menembus batas 60. Pakai
+    // absolute supaya dapat halaman full tanpa suffix — brand tetap ada
+    // di og:site_name.
+    title: p.title.length > 46 ? { absolute: p.title } : p.title,
+    description: p.excerpt.length > 160 ? p.excerpt.slice(0, 157).trim() + '…' : p.excerpt,
     alternates: { canonical: `/blog/${p.slug}` },
     openGraph: {
       title: p.title,

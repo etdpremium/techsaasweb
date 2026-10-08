@@ -14,8 +14,14 @@ export async function generateMetadata({ params }) {
   const d = getDemo(slug);
   if (!d) return {};
   return {
-    title: `Contoh Website ${d.niche} — ${d.name}`,
-    description: `${getListing(slug)?.tagline || d.headline} Lihat isi setiap halaman, cara kerja asisten, dan fasilitas yang termasuk.`,
+    // sama dengan blog: hindari suffix "+14 char" kalau title sudah panjang
+    title: `Contoh Website ${d.niche} — ${d.name}`.length > 46
+      ? { absolute: `Website ${d.niche}: ${d.name}` }
+      : `Contoh Website ${d.niche} — ${d.name}`,
+    description: (() => {
+      const base = `${getListing(slug)?.tagline || d.headline} Lihat isi setiap halaman, cara kerja asisten, dan fasilitas yang termasuk.`;
+      return base.length > 160 ? base.slice(0, 157).trim() + '…' : base;
+    })(),
     keywords: d.keywords,
     alternates: { canonical: `/demos/${slug}` },
   };
