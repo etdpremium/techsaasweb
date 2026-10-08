@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { Contact, Lead } from '../../../db/schema';
+import { eq, desc } from 'drizzle-orm';
 import { currentUser } from '../../../lib/session';
 
 // POST publik (form kontak marketing) → juga jadi lead
@@ -13,22 +15,26 @@ export async function POST(req) {
   if (!name || !email || !message)
     return NextResponse.json({ ok: false, error: 'Nama, email, dan pesan wajib diisi.' }, { status: 400 });
   const user = await currentUser();
-  const rec = await prisma.contact.create({
-    data: { name, email, plan, message, userId: user?.id || null },
-  });
+  const rec = await db.insert(Contact)
+    .values({ name, email, plan, message, userId: user?.id || null })
+    .returning();
   // sinkron jadi lead biar masuk pipeline dashboard
-  await prisma.lead.create({
-    data: { tenant: 'global', name, contact: phone || email, note: `contact: ${plan} — ${message.slice(0, 120)}`, source: 'contact', userId: user?.id || null },
-  }).catch(() => {});
-  return NextResponse.json({ ok: true, id: rec.id });
+  await db.insert(Lead)
+    .values({ tenant: 'global', name, contact: phone || email, note: `contact: ${plan} — ${message.slice(0, 120)}`, source: 'contact', userId: user?.id || null })
+    .catch(() => {});
+  return NextResponse.json({ ok: true, id: rec[0].id });
 }
 
 // GET butuh login
 export async function GET() {
   const user = await currentUser();
   if (!user) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
-  const where = user.role === 'admin' ? {} : { userId: user.id };
-  const items = await prisma.contact.findMany({ where, orderBy: { createdAt: 'desc' }, take: 100 });
+  const where = user.role === 'admin' ? undefined : eq(Contact.userId, user.id);
+  const items = await db.select()
+    .from(Contact)
+    .where(where)
+    .orderBy(desc(Contact.createdAt))
+    .limit(100);
   return NextResponse.json({ ok: true, contacts: items });
 }
 
@@ -38,6 +44,6 @@ export async function DELETE(req) {
   if (!user || user.role !== 'admin') return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   const { id } = await req.json().catch(() => ({}));
   if (!id) return NextResponse.json({ ok: false }, { status: 400 });
-  await prisma.contact.delete({ where: { id } }).catch(() => {});
+  await db.delete(Contact).where(eq(Contact.id, id)).catch(() => {});
   return NextResponse.json({ ok: true });
 }

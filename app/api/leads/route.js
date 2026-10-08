@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { Lead } from '../../../db/schema';
+import { eq, desc, and } from 'drizzle-orm';
 import { currentUser } from '../../../lib/session';
 
 // POST publik (visitor chat/form), GET butuh login.
@@ -15,24 +17,22 @@ export async function POST(req) {
   if (!lead.name || !lead.contact)
     return NextResponse.json({ ok: false, error: 'Name and contact are required.' }, { status: 400 });
   // Kontak yang sudah ada tidak diduplikasi — kembalikan data lama.
-  const ada = await prisma.lead.findFirst({ where: { contact: lead.contact } });
-  if (ada) return NextResponse.json({ ok: true, id: ada.id, duplicate: true });
+  const ada = await db.select({ id: Lead.id }).from(Lead).where(eq(Lead.contact, lead.contact)).limit(1);
+  if (ada[0]) return NextResponse.json({ ok: true, id: ada[0].id, duplicate: true });
   const user = await currentUser();
-  const rec = await prisma.lead.create({
-    data: { ...lead, userId: user?.id || null },
-  });
-  return NextResponse.json({ ok: true, id: rec.id });
+  const rec = await db.insert(Lead).values({ ...lead, userId: user?.id || null }).returning();
+  return NextResponse.json({ ok: true, id: rec[0].id });
 }
 
 export async function GET() {
   const user = await currentUser();
   if (!user) return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
-  const where = user.role === 'admin' ? {} : { userId: user.id };
-  const leads = await prisma.lead.findMany({
-    where,
-    orderBy: { createdAt: 'desc' },
-    take: 200,
-  });
+  const where = user.role === 'admin' ? undefined : eq(Lead.userId, user.id);
+  const leads = await db.select()
+    .from(Lead)
+    .where(where)
+    .orderBy(desc(Lead.createdAt))
+    .limit(200);
   return NextResponse.json({ ok: true, leads });
 }
 
@@ -43,10 +43,9 @@ export async function PUT(req) {
   const { id, status } = await req.json().catch(() => ({}));
   const st = String(status || '').slice(0, 20);
   if (!id || !st) return NextResponse.json({ ok: false, error: 'id and status required.' }, { status: 400 });
-  const where = { id };
-  if (user.role !== 'admin') where.userId = user.id;
-  const upd = await prisma.lead.updateMany({ where, data: { status: st } });
-  if (upd.count === 0) return NextResponse.json({ ok: false, error: 'Not found.' }, { status: 404 });
+  const where = user.role !== 'admin' ? and(eq(Lead.id, id), eq(Lead.userId, user.id)) : eq(Lead.id, id);
+  const upd = await db.update(Lead).set({ status: st }).where(where).returning();
+  if (upd.length === 0) return NextResponse.json({ ok: false, error: 'Not found.' }, { status: 404 });
   return NextResponse.json({ ok: true });
 }
 
@@ -56,6 +55,6 @@ export async function DELETE(req) {
   if (!user || user.role !== 'admin') return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   const { id } = await req.json().catch(() => ({}));
   if (!id) return NextResponse.json({ ok: false, error: 'id required.' }, { status: 400 });
-  await prisma.lead.delete({ where: { id } }).catch(() => {});
+  await db.delete(Lead).where(eq(Lead.id, id)).catch(() => {});
   return NextResponse.json({ ok: true });
 }

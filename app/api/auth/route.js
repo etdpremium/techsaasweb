@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { User } from '../../../db/schema';
+import { eq } from 'drizzle-orm';
 import { setSession, clearSession, currentUser } from '../../../lib/session';
 
 function ok(data) {
@@ -29,7 +31,8 @@ export async function POST(req) {
   if (action === 'login') {
     const { email, password } = body;
     const e = String(email || '').trim().toLowerCase();
-    const user = await prisma.user.findUnique({ where: { email: e } });
+    const rows = await db.select().from(User).where(eq(User.email, e)).limit(1);
+    const user = rows[0];
     if (!user) return NextResponse.json({ ok: false, error: 'Wrong email or password.' }, { status: 400 });
     const good = await bcrypt.compare(String(password || ''), user.password);
     if (!good) return NextResponse.json({ ok: false, error: 'Wrong email or password.' }, { status: 400 });

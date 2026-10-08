@@ -1,4 +1,6 @@
-import { prisma } from '../../lib/prisma';
+import { db } from '../../lib/db';
+import { Post } from '../../db/schema';
+import { desc, and, or, like, eq, count as countFn } from 'drizzle-orm';
 import Reveal from '../../components/Reveal';
 import BlogFilter from './filter';
 
@@ -10,6 +12,9 @@ export const metadata = {
 
 const PER_PAGE = 12;
 
+// D1 hanya tersedia di Workers runtime — jangan di-SSG saat build.
+export const dynamic = 'force-dynamic';
+
 export default async function Blog({ searchParams }) {
   const sp = await searchParams;
   const q = String(sp?.q || '').slice(0, 80).trim();
@@ -17,36 +22,40 @@ export default async function Blog({ searchParams }) {
   const cat = String(sp?.cat || '').slice(0, 60);
   const page = Math.max(1, parseInt(sp?.page || '1', 10) || 1);
 
-  const where = {};
-  if (lang !== 'semua') where.lang = lang;
-  if (cat) where.category = cat;
+  const where = [];
+  if (lang !== 'semua') where.push(eq(Post.lang, lang));
+  if (cat) where.push(eq(Post.category, cat));
   if (q) {
-    where.OR = [
-      { title: { contains: q } },
-      { excerpt: { contains: q } },
-      { body: { contains: q } },
-    ];
+    where.push(
+      or(
+        like(Post.title, `%${q}%`),
+        like(Post.excerpt, `%${q}%`),
+        like(Post.body, `%${q}%`),
+      ),
+    );
   }
+  const whereAll = where.length ? and(...where) : undefined;
 
   const [total, posts, cats] = await Promise.all([
-    prisma.post.count({ where }),
-    prisma.post.findMany({
-      where,
-      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
-      skip: (page - 1) * PER_PAGE,
-      take: PER_PAGE,
-    }),
-    prisma.post.groupBy({ by: ['category'] }),
+    db.select({ c: countFn() }).from(Post).where(whereAll),
+    db.select()
+      .from(Post)
+      .where(whereAll)
+      .orderBy(desc(Post.date), desc(Post.createdAt))
+      .offset((page - 1) * PER_PAGE)
+      .limit(PER_PAGE),
+    db.select({ category: Post.category }).from(Post).groupBy(Post.category),
   ]);
 
-  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  const totalNum = total[0]?.c ?? 0;
+  const pages = Math.max(1, Math.ceil(totalNum / PER_PAGE));
   const safePage = Math.min(page, pages);
-  const list = safePage === page ? posts : await prisma.post.findMany({
-    where,
-    orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
-    skip: (safePage - 1) * PER_PAGE,
-    take: PER_PAGE,
-  });
+  const list = safePage === page ? posts : await db.select()
+    .from(Post)
+    .where(whereAll)
+    .orderBy(desc(Post.date), desc(Post.createdAt))
+    .offset((safePage - 1) * PER_PAGE)
+    .limit(PER_PAGE);
 
   const link = (over) => {
     const p = new URLSearchParams();

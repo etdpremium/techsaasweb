@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { Post } from '../../../db/schema';
+import { desc, eq } from 'drizzle-orm';
 import { currentUser } from '../../../lib/session';
 
 // CRUD artikel — khusus admin.
@@ -11,7 +13,7 @@ async function needAdmin() {
 
 export async function GET() {
   if (!(await needAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
-  const items = await prisma.post.findMany({ orderBy: { createdAt: 'desc' }, take: 200 });
+  const items = await db.select().from(Post).orderBy(desc(Post.createdAt)).limit(200);
   return NextResponse.json({ ok: true, items });
 }
 
@@ -22,8 +24,7 @@ export async function POST(req) {
   const title = String(b.title || '').trim().slice(0, 160);
   const body = String(b.body || '').trim();
   if (!slug || !title || !body) return NextResponse.json({ ok: false, error: 'Slug, judul, dan isi wajib.' }, { status: 400 });
-  const item = await prisma.post.create({
-    data: {
+  const item = await db.insert(Post).values({
       slug,
       title,
       excerpt: String(b.excerpt || '').trim().slice(0, 220) || title,
@@ -33,16 +34,15 @@ export async function POST(req) {
       read: String(b.read || '5 menit'),
       thumb: String(b.thumb || `/assets/blog/${slug}.jpg`),
       body,
-    },
-  });
-  return NextResponse.json({ ok: true, item });
+    }).returning();
+  return NextResponse.json({ ok: true, item: item[0] });
 }
 
 export async function DELETE(req) {
   if (!(await needAdmin())) return NextResponse.json({ ok: false }, { status: 401 });
   const body = await req.json().catch(() => ({}));
   if (!body.id) return NextResponse.json({ ok: false }, { status: 400 });
-  await prisma.post.delete({ where: { id: body.id } });
+  await db.delete(Post).where(eq(Post.id, body.id));
   return NextResponse.json({ ok: true });
 }
 
@@ -70,8 +70,8 @@ export async function PUT(req) {
     data.body = body;
   }
   try {
-    const item = await prisma.post.update({ where: { id: String(b.id) }, data });
-    return NextResponse.json({ ok: true, item });
+    const item = await db.update(Post).set(data).where(eq(Post.id, String(b.id))).returning();
+    return NextResponse.json({ ok: true, item: item[0] });
   } catch {
     return NextResponse.json({ ok: false, error: 'Artikel tidak ditemukan / slug ganda.' }, { status: 400 });
   }

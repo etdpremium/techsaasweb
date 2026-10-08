@@ -1,4 +1,3 @@
-import { prisma } from '../../lib/prisma';
 import { currentUser } from '../../lib/session';
 import { redirect } from 'next/navigation';
 

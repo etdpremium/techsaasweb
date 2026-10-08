@@ -1,4 +1,6 @@
-import { prisma } from '../../lib/prisma';
+import { db } from '../../lib/db';
+import { Lead, Order, Subscriber, ChatLog, Contact, User } from '../../db/schema';
+import { desc, asc, eq, and, or, like, count as countFn, sql } from 'drizzle-orm';
 import { currentUser } from '../../lib/session';
 import { redirect } from 'next/navigation';
 import Reveal from '../../components/Reveal';
@@ -9,6 +11,9 @@ import { HapusBtn, BersihLogBtn } from './actions';
 import { AdminLeads, AdminOrders, AdminSubs } from './_parts';
 
 export const metadata = { title: 'Admin — TechSaaSWeb', robots: 'noindex, nofollow' };
+
+// D1 hanya tersedia di Workers runtime — jangan di-SSG saat build.
+export const dynamic = 'force-dynamic';
 
 const MODE_LABEL = {
   ai: 'AI', template: 'Template', cached: 'Cache', form: 'Formulir',
@@ -28,22 +33,36 @@ export default async function AdminPage({ searchParams }) {
   const q = String(sp?.q || '').slice(0, 80);
   const mode = String(sp?.mode || 'semua').slice(0, 20);
 
-  const chatWhere = {};
-  if (q) chatWhere.OR = [{ message: { contains: q } }, { reply: { contains: q } }];
-  if (mode !== 'semua') chatWhere.mode = mode;
+  const chatWhere = [];
+  if (q) chatWhere.push(or(like(ChatLog.message, `%${q}%`), like(ChatLog.reply, `%${q}%`)));
+  if (mode !== 'semua') chatWhere.push(eq(ChatLog.mode, mode));
+  const chatWhereAll = chatWhere.length ? and(...chatWhere) : undefined;
 
-  const [leads, orders, subs, chatModes, chatModels, chats, contacts, totalChats] = await Promise.all([
-    prisma.lead.findMany({ orderBy: { createdAt: 'desc' }, take: 100, include: { user: { select: { name: true, email: true } } } }),
-    prisma.order.findMany({ orderBy: { createdAt: 'desc' }, take: 50, include: { user: { select: { name: true, email: true } } } }),
-    prisma.subscriber.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.chatLog.groupBy({ by: ['mode'], _count: true }),
-    prisma.chatLog.groupBy({ by: ['model'], _count: true }),
-    prisma.chatLog.findMany({ where: chatWhere, orderBy: { createdAt: 'desc' }, take: 50 }),
-    prisma.contact.findMany({ orderBy: { createdAt: 'desc' }, take: 30 }),
-    prisma.chatLog.count(),
+  const [leadRows, orderRows, subs, chatModes, chatModels, chats, contacts, totalChats] = await Promise.all([
+    db.select({ lead: Lead, userName: User.name, userEmail: User.email })
+      .from(Lead)
+      .leftJoin(User, eq(Lead.userId, User.id))
+      .orderBy(desc(Lead.createdAt))
+      .limit(100),
+    db.select({ order: Order, userName: User.name, userEmail: User.email })
+      .from(Order)
+      .leftJoin(User, eq(Order.userId, User.id))
+      .orderBy(desc(Order.createdAt))
+      .limit(50),
+    db.select().from(Subscriber).orderBy(desc(Subscriber.createdAt)),
+    db.select({ mode: ChatLog.mode, c: countFn() }).from(ChatLog).groupBy(ChatLog.mode),
+    db.select({ model: ChatLog.model, c: countFn() }).from(ChatLog).groupBy(ChatLog.model),
+    db.select().from(ChatLog).where(chatWhereAll).orderBy(desc(ChatLog.createdAt)).limit(50),
+    db.select().from(Contact).orderBy(desc(Contact.createdAt)).limit(30),
+    db.select({ c: countFn() }).from(ChatLog),
   ]);
 
-  const hitung = (m) => chatModes.find((c) => c.mode === m)?._count || 0;
+  // flatten relation ke bentuk lama (l.user.name, o.user.email)
+  const leads = leadRows.map((r) => ({ ...r.lead, user: { name: r.userName, email: r.userEmail } }));
+  const orders = orderRows.map((r) => ({ ...r.order, user: { name: r.userName, email: r.userEmail } }));
+  const totalChatNum = totalChats[0]?.c ?? 0;
+
+  const hitung = (m) => chatModes.find((c) => c.mode === m)?.c || 0;
   const menang = leads.filter((l) => l.status === 'won').length;
 
   return (

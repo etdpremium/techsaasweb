@@ -1,5 +1,7 @@
 import { demos } from '../../lib/demos';
-import { prisma } from '../../lib/prisma';
+import { db } from '../../lib/db';
+import { Post } from '../../db/schema';
+import { desc } from 'drizzle-orm';
 import { CITIES } from '../../lib/lokasi';
 import { tiers } from '../../lib/pricing';
 
@@ -10,11 +12,10 @@ const BASE = 'https://techsaasweb.com';
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const posts = await prisma.post.findMany({
-    select: { slug: true, title: true },
-    orderBy: { date: 'desc' },
-    take: 40,
-  });
+  const posts = await db.select({ slug: Post.slug, title: Post.title })
+    .from(Post)
+    .orderBy(desc(Post.date))
+    .limit(40);
 
   const lines = [
     '# TechSaaSWeb',

@@ -2,7 +2,8 @@
 // Dev: SQLite file  |  Prod target: Cloudflare D1 (mirror via prisma-client-d1)
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {

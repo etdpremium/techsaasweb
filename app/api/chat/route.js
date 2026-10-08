@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import fs from 'node:fs';
 import path from 'node:path';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { ChatLog, Lead, CannedResponse } from '../../../db/schema';
+import { eq, asc } from 'drizzle-orm';
 import { getDemo } from '../../../lib/demos';
 import { TERMS, CONTACT_EMAIL } from '../../../lib/pricing';
 
@@ -437,8 +439,8 @@ export async function POST(req) {
   // 1. Prompt injection → tolak sopan, arahkan ke kontak (dicatat sebagai blocked)
   if (isInjection(clean)) {
     const safe = `Maaf, permintaan itu tidak bisa saya proses. Kalau ada yang ingin ditanyakan soal website atau paket, silakan — atau hubungi langsung: ${KONTAK}.`;
-    await prisma.chatLog.create({
-      data: { tenant: tenant || 'global', message: clean.slice(0, 200), reply: safe, mode: 'blocked' },
+    await db.insert(ChatLog).values({
+      tenant: tenant || 'global', message: clean.slice(0, 200), reply: safe, mode: 'blocked',
     }).catch(() => {});
     return NextResponse.json({ mode: 'form', reply: safe });
   }
@@ -452,7 +454,7 @@ export async function POST(req) {
   );
   const lead = extractLead(clean);
   if (lead) {
-    const sudahAda = await prisma.lead.findFirst({ where: { contact: lead.phone } }).catch(() => null);
+    const sudahAda = await db.select({ id: Lead.id }).from(Lead).where(eq(Lead.contact, lead.phone)).limit(1).catch(() => []);
     if (sudahAda) {
       if (nicheKnown) {
         return NextResponse.json({
@@ -465,8 +467,8 @@ export async function POST(req) {
         reply: 'Siap. Ada lagi yang bisa saya bantu?',
       });
     }
-    await prisma.lead.create({
-      data: { tenant: tenant || 'global', name: lead.name, contact: lead.phone, note: 'auto-capture chat', source: 'chat' },
+    await db.insert(Lead).values({
+      tenant: tenant || 'global', name: lead.name, contact: lead.phone, note: 'auto-capture chat', source: 'chat',
     }).catch(() => {});
     const personal = lead.name !== '(dari chat)' ? `Siap ${lead.name}! ` : '';
     if (nicheKnown) {
@@ -487,7 +489,7 @@ export async function POST(req) {
   // 2b. Canned responses owner (prioritas atas aturan MD).
   let canned = [];
   try {
-    canned = await prisma.cannedResponse.findMany({ where: { active: true }, orderBy: { createdAt: 'asc' } });
+    canned = await db.select().from(CannedResponse).where(eq(CannedResponse.active, 1)).orderBy(asc(CannedResponse.createdAt));
   } catch {}
   const cannedHit = canned.find((c) =>
     String(c.keyword || '').split('|').map((s) => s.trim().toLowerCase()).filter(Boolean)
@@ -547,15 +549,15 @@ export async function POST(req) {
   // 6. AI gagal semua → langsung form kontak (tanpa jaring template).
   if (!reply) {
     const fallback = `Terima kasih atas pertanyaannya — tim kami balas dalam 5 menit. Atau hubungi langsung: ${KONTAK}.`;
-    await prisma.chatLog.create({
-      data: { tenant: tenant || 'global', message: clean, reply: fallback, mode: 'form' },
+    await db.insert(ChatLog).values({
+      tenant: tenant || 'global', message: clean, reply: fallback, mode: 'form',
     }).catch(() => {});
     return NextResponse.json({ mode: 'form', reply: fallback, error: String(lastErr?.message || lastErr) });
   }
 
   if (demo) faqCache.set(`${tenant}|${clean.toLowerCase()}`, reply);
-  await prisma.chatLog.create({
-    data: { tenant: tenant || 'global', message: clean, reply, mode: modelUsed ? 'ai' : 'cached', model: modelUsed },
+  await db.insert(ChatLog).values({
+    tenant: tenant || 'global', message: clean, reply, mode: modelUsed ? 'ai' : 'cached', model: modelUsed,
   }).catch(() => {});
 
   return NextResponse.json({ mode: 'ai', reply: tempel(rapikanBalasan(reply, nicheKnown)), model: modelUsed });

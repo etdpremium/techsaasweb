@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { Order, Lead, User } from '../../../db/schema';
+import { eq, desc } from 'drizzle-orm';
 import { currentUser } from '../../../lib/session';
 import { tiers } from '../../../lib/pricing';
 import { rupiah } from '../../../lib/format';
@@ -22,23 +24,28 @@ export async function POST(req) {
   };
   const isCustom = tier.price == null;
 
-  const order = await prisma.order.create({
-    data: {
-      userId: user.id,
-      planId: tier.id,
-      planName: tier.name,
-      price: tier.price ?? 0,      // 0 untuk paket custom — harga ditentukan admin
-      billing: 'once',             // sekali bayar
-      brief: JSON.stringify(brief),
-    },
-  });
+  const order = await db.insert(Order).values({
+    userId: user.id,
+    planId: tier.id,
+    planName: tier.name,
+    price: tier.price ?? 0,      // 0 untuk paket custom — harga ditentukan admin
+    billing: 'once',             // sekali bayar
+    brief: JSON.stringify(brief),
+  }).returning();
+
   // sinkron jadi lead
-  await prisma.lead.create({
-    data: { tenant: 'global', name: user.name, contact: user.email, note: `order: ${tier.name} (${brief.niche || '—'})${isCustom ? ' [CUSTOM QUOTE]' : ''}`, source: 'order', userId: user.id },
+  await db.insert(Lead).values({
+    tenant: 'global',
+    name: user.name,
+    contact: user.email,
+    note: `order: ${tier.name} (${brief.niche || '—'})${isCustom ? ' [CUSTOM QUOTE]' : ''}`,
+    source: 'order',
+    userId: user.id,
   }).catch(() => {});
+
   return NextResponse.json({
     ok: true,
-    id: order.id,
+    id: order[0].id,
     invoice: isCustom
       ? {
           planName: tier.name,
@@ -57,13 +64,27 @@ export async function POST(req) {
   });
 }
 
-// GET: order user (admin lihat semua)
+// GET: order user (admin lihat semua) — join user manual
 export async function GET() {
   const user = await currentUser();
   if (!user) return NextResponse.json({ ok: false, error: 'Tidak berhak akses.' }, { status: 401 });
-  const where = user.role === 'admin' ? {} : { userId: user.id };
-  const orders = await prisma.order.findMany({ where, orderBy: { createdAt: 'desc' }, include: { user: { select: { name: true, email: true } } } });
-  return NextResponse.json({ ok: true, orders });
+  const where = user.role === 'admin' ? undefined : eq(Order.userId, user.id);
+  const orders = await db.select({
+    order: Order,
+    userName: User.name,
+    userEmail: User.email,
+  })
+    .from(Order)
+    .leftJoin(User, eq(Order.userId, User.id))
+    .where(where)
+    .orderBy(desc(Order.createdAt));
+
+  // flatten ke bentuk lama (order.user.name / order.user.email)
+  const out = orders.map((r) => ({
+    ...r.order,
+    user: { name: r.userName, email: r.userEmail },
+  }));
+  return NextResponse.json({ ok: true, orders: out });
 }
 
 // PATCH: ubah status order — khusus admin (new → building → launched / cancelled)
@@ -74,7 +95,7 @@ export async function PATCH(req) {
   const st = String(status || '').slice(0, 20);
   if (!id || !['new', 'building', 'launched', 'cancelled'].includes(st))
     return NextResponse.json({ ok: false, error: 'Status tidak valid.' }, { status: 400 });
-  await prisma.order.update({ where: { id }, data: { status: st } }).catch(() => {});
+  await db.update(Order).set({ status: st }).where(eq(Order.id, id)).catch(() => {});
   return NextResponse.json({ ok: true });
 }
 
@@ -84,6 +105,6 @@ export async function DELETE(req) {
   if (!user || user.role !== 'admin') return NextResponse.json({ ok: false, error: 'Unauthorized' }, { status: 401 });
   const { id } = await req.json().catch(() => ({}));
   if (!id) return NextResponse.json({ ok: false }, { status: 400 });
-  await prisma.order.delete({ where: { id } }).catch(() => {});
+  await db.delete(Order).where(eq(Order.id, id)).catch(() => {});
   return NextResponse.json({ ok: true });
 }

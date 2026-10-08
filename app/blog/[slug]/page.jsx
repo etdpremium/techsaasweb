@@ -1,16 +1,17 @@
 import { notFound } from 'next/navigation';
-import { prisma } from '../../../lib/prisma';
+import { db } from '../../../lib/db';
+import { Post } from '../../../db/schema';
+import { eq, and, ne, desc, sql } from 'drizzle-orm';
 import Reveal from '../../../components/Reveal';
 import JsonLd from '../../../components/JsonLd';
 
-export async function generateStaticParams() {
-  const all = await prisma.post.findMany({ select: { slug: true } });
-  return all.map((p) => ({ slug: p.slug }));
-}
+// D1 hanya tersedia di Workers runtime — jangan di-SSG saat build.
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const p = await prisma.post.findUnique({ where: { slug } });
+  const rows = await db.select().from(Post).where(eq(Post.slug, slug)).limit(1);
+  const p = rows[0];
   if (!p) return {};
   return {
     title: p.title,
@@ -85,16 +86,21 @@ function esc(s) {
 // kolom sempit di tengah, kicker kategori, headline, byline, hero, isi.
 export default async function BlogPost({ params }) {
   const { slug } = await params;
-  const p = await prisma.post.findUnique({ where: { slug } });
+  const rows = await db.select().from(Post).where(eq(Post.slug, slug)).limit(1);
+  const p = rows[0];
   if (!p) notFound();
-  prisma.post.update({ where: { slug }, data: { views: { increment: 1 } } }).catch(() => {});
-  const more = await prisma.post.findMany({
-    where: { slug: { not: slug }, lang: p.lang, category: p.category },
-    take: 3,
-    orderBy: { date: 'desc' },
-  });
+  db.update(Post).set({ views: sql`${Post.views} + 1` }).where(eq(Post.slug, slug)).then(() => {}).catch(() => {});
+  const more = await db.select()
+    .from(Post)
+    .where(and(ne(Post.slug, slug), eq(Post.lang, p.lang), eq(Post.category, p.category)))
+    .orderBy(desc(Post.date))
+    .limit(3);
   const fallback = more.length === 0
-    ? await prisma.post.findMany({ where: { slug: { not: slug }, lang: p.lang }, take: 3, orderBy: { date: 'desc' } })
+    ? await db.select()
+        .from(Post)
+        .where(and(ne(Post.slug, slug), eq(Post.lang, p.lang)))
+        .orderBy(desc(Post.date))
+        .limit(3)
     : [];
   const related = more.length > 0 ? more : fallback;
   const shareUrl = `https://techsaasweb.com/blog/${p.slug}`;
