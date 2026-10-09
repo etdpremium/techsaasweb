@@ -8,11 +8,11 @@ Calon pembeli menilai website-mu dalam 3 detik. Dalam waktu itu, mereka sudah me
 
 Yang membuat terlihat profesional adalah konsistensi kecil: apakah spasi sama di setiap halaman, apakah foto sejajar, apakah tulisan bisa dibaca di HP. Detail-detail ini hampir tidak disadari, tapi kalau berantakan, calon pembeli merasa usahamu juga berantakan.
 
-Bagusnya: detail-detail ini murah. BahkanGratis. Yang dibutuhkan hanya ketelitian, bukan anggaran.
+Bagusnya: detail-detail ini murah. Bahkan gratis. Yang dibutuhkan hanya ketelitian, bukan anggaran.
 
 ## 7 detail yang langsung terlihat
 
-### 1. Satu jenis huruf, dua ukuran
+## 1. Satu jenis huruf, dua ukuran
 
 Huruf yang dipakai untuk judul harus sama dengan huruf isi, hanya lebih besar dan lebih tebal. Tidak perlu langganan font premium — buka Google Fonts, pilih satu, pakai di seluruh website.
 
@@ -22,13 +22,13 @@ Huruf yang dipakai untuk judul harus sama dengan huruf isi, hanya lebih besar da
 
 Kamu bisa membedakan bagian dengan spasi dan garis pemisah, bukan dengan huruf baru.
 
-### 2. Warna utama, warna pendamping, dan berhenti
+## 2. Warna utama, warna pendamping, dan berhenti
 
 Pilih satu warna utama (yang ada di logo-mu), satu warna untuk tulisan (hampir hitam, bukan hitam pekat), dan satu warna latar (putih atau krem). Tiga warna saja. Setiap warna tambahan adalah kesempatan untuk terlihat berantakan.
 
 Bila kamu butuh warna tambahan untuk tombol atau tanda, ambil warna utama yang kamu pilih lalu buat versi yang lebih muda dari warna itu (lebih muda untuk latar, lebih tua untuk teks).
 
-### 3. Foto produk terang dan tajam
+## 3. Foto produk terang dan tajam
 
 Ini detail yang paling sering mengkhianati UMKM. Foto yang diambil malam hari dengan lampu rumah langsung terlihat murah.
 
@@ -39,13 +39,13 @@ Ini detail yang paling sering mengkhianati UMKM. Foto yang diambil malam hari de
 
 Tidak butuh kamera mahal. HP yang diproduksi 3 tahun terakhir sudah cukup, selama cahayanya benar.
 
-### 4. Jarak yang sama di setiap bagian
+## 4. Jarak yang sama di setiap bagian
 
 Bagian-bagian website harus punya jarak yang sama: jarak antara judul dan isi, jarak antar kartu produk, jarak antar bagian. Mata pembaca merasakan ketidakkonsistenan ini meski tidak tahu sebutannya.
 
 Aturan sederhana: tentukan satu jarak dasar (misalnya 16px), dan pakai kelipatannya di seluruh website — 16px untuk jarak kecil, 32px untuk jarak sedang, 48px untuk jarak antar bagian besar.
 
-### 5. Tulisan yang berbicara kepada satu orang
+## 5. Tulisan yang berbicara kepada satu orang
 
 Website UMKM yang terlihat murah sering menulis seperti pengumuman: "Kami menyediakan layanan..." seperti koran. Website profesional menulis seperti obrolan dengan tetangga: "Kamu butuh..." atau "Saya bisa bantu...".
 
@@ -53,7 +53,7 @@ Ubah semua "kami" menjadi "saya" (atau "kamu" ke "Anda" bila ingin sedikit forma
 
 Bila perlu, tulis ulang semua kalimat di website-mu sebagai surat untuk pelanggan terbaikmu. Surat itu pasti tidak akan terdengar seperti pengumuman.
 
-### 6. Satu jalur pesan di setiap halaman
+## 6. Satu jalur pesan di setiap halaman
 
 Setiap halaman harus punya satu tindakan utama yang jelas: "Pesan sekarang", "Chat WhatsApp", atau "Lihat harga". Satu per halaman — bukan tiga tombol yang sama-sama bersaing.
 
@@ -63,7 +63,7 @@ Setiap halaman harus punya satu tindakan utama yang jelas: "Pesan sekarang", "Ch
 
 Konsistensi ini yang membuat website besar terlihat tenang dan terpercaya, berbeda dengan website yang setiap sudutnya meminta perhatian.
 
-### 7. Kecepatan adalah profesionalisme
+## 7. Kecepatan adalah profesionalisme
 
 Halaman yang muncul lebih lambat dari 3 detik sudah kehilangan setengah dari pengunjung sebelum mereka membaca satu kata pun. Dan pengunjung yang pergi tidak pernah melihat bagusnya desainmu.
 
@@ -74,7 +74,7 @@ Kamu bisa memeriksa kecepatan website-mu gratis dengan PageSpeed Insights. Tanpa
 - Tidak perlu membeli tema premium. Tema gratis yang dipakai dengan konsisten mengalahkan tema mahal yang dipakai setengah-setengah.
 - Tidak perlu menulis banyak halaman. 5 halaman yang berisi lebih baik dari 20 halaman yang ditulis asal-asalan.
 - Tidak perlu memasang semua fitur. Cukup pasang yang dibutuhkan pembeli: cara memesan, cara menghubungi, dan apa saja yang kamu jual.
-- Tidak perlu mahal untuk Hosting. Hosting Rp 50 ribu per bulan sudah cukup untuk website UMKM yang halamanstrukturnya sederhana.
+- Tidak perlu mahal untuk hosting. Hosting Rp 50 ribu per bulan sudah cukup untuk website UMKM yang strukturnya sederhana.
 
 ## Mulai dari mana hari ini
 
