@@ -12,7 +12,9 @@ import { Zap, MessageSquare, CalendarCheck, BarChart3, Globe, ShieldCheck, Check
 import { juta } from '../lib/format';
 
 export const metadata = {
-  title: 'Jasa Pembuatan Website Murah + Chatbot CS AI Otomatis',
+  title: {
+    absolute: 'Jasa Pembuatan Website Murah + Chatbot CS AI Otomatis — TechSaaSWeb',
+  },
   description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari, mulai Rp 1,2 juta.',
   alternates: { canonical: '/' },
 };
