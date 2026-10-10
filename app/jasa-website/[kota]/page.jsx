@@ -31,7 +31,7 @@ export default async function KotaPage({ params }) {
   const faq = [
     { q: `Apakah melayani ${nama} secara langsung?`, a: `Ya. Seluruh proses dikerjakan online — diskusi, pembuatan, hingga serah terima — jadi Anda di ${nama}, ${c.provinsi} tidak perlu tatap muka.` },
     { q: 'Berapa lama website jadi?', a: 'Online dalam 3–14 hari setelah konsultasi gratis, tergantung paket yang dipilih.' },
-    { q: 'Berapa biayanya?', a: 'Harga mulai Rp 1,2 jt, tanpa biaya tersembunyi. Lihat rincian lengkap di halaman paket.' },
+    { q: 'Berapa biayanya?', a: 'Harga mulai Rp 1,2 jt. Lihat rincian lengkap di halaman paket.' },
     { q: 'Apakah domain dan hosting termasuk?', a: 'Ya. Domain .com/.id gratis tahun pertama, hosting, dan SSL sudah termasuk di semua paket.' },
     { q: `Bagaimana cara memesan dari ${nama}?`, a: 'Hubungi kami via WhatsApp atau email, atau isi halaman pemesanan. Kami balas dalam 24 jam.' },
   ];

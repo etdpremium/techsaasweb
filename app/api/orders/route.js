@@ -60,7 +60,7 @@ export async function POST(req) {
           total: tier.price,
           totalFormatted: rupiah(tier.price),
           methods: ['Transfer bank', 'QRIS', 'Virtual Account', 'E-wallet (GoPay/OVO/DANA)'],
-          note: 'Sekali bayar. Domain .com/.id, hosting, SSL, dan semua infrastruktur included.',
+          note: 'Pembayaran tahunan. Domain .com/.id, hosting, SSL, dan semua infrastruktur included.',
           next: 'Transfer ke rekening di halaman pemesanan, lalu konfirmasi via WhatsApp dengan nomor invoice Anda.',
         },
   });

@@ -17,7 +17,7 @@ export const metadata = {
     template: '%s | TechSaaSWeb',
   },
   description:
-    'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari, mulai Rp 1,2 juta.',
+    'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari.',
   keywords: [
     'jasa pembuatan website', 'jasa website', 'website murah', 'website bisnis', 'website UMKM',
     'pembuatan website', 'domain .com', 'domain .id', 'chatbot CS', 'CS AI otomatis',
@@ -27,7 +27,7 @@ export const metadata = {
   openGraph: {
     type: 'website', siteName: 'TechSaaSWeb', locale: 'id_ID',
     title: 'Jasa Pembuatan Website Murah + Chatbot CS AI Otomatis — TechSaaSWeb',
-    description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari, mulai Rp 1,2 juta.',
+    description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari.',
     images: ['/logo-biru-tua.svg'],
   },
   twitter: { card: 'summary_large_image' },

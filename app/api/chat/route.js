@@ -14,15 +14,28 @@ import { TERMS, CONTACT_EMAIL } from '../../../lib/pricing';
 //   Cloudflare Workers AI (10.000 neurons/hari, tanpa kartu) dan Groq (1.000/hari/model).
 // Jujur: tidak ada LLM gratis-selamanya-tanpa-batas. Arsitektur pool +
 // template + form memastikan pengunjung tidak pernah blank apa pun yang terjadi.
+//
+// URUTAN = PRIORITAS. TRAP (11-Okt-2026): `openrouter/free` (auto-router OpenRouter)
+// adalah SUMBER UTAMA bocoran ("User Safety: safe", "According to rules: ...") —
+// 2 dari 4 request di produksi memuntahkan meta output alih-alih jawaban CS.
+// Ia ditaruh terakhir sebelum Pollinations; model spesifik dipakai lebih dulu.
+//
+// TRAP 2 (11-Okt-2026): `qwen/qwen3.8-27b:free` SUDAH TIDAK GRATIS — OpenRouter
+// balas 404 permanen "unavailable for free" (slug berbayar: qwen/qwen3.8-27b).
+// Daftar :free berubah cepat — validasi berkala dengan GET /api/v1/models.
+// Pengganti yang masih :free di 11-Okt-2026: gemma-4-26b (a4b), nemotron-3-super.
 const POOL = [
   { id: 'cloudflare', via: 'cloudflare' },
-  { id: 'qwen/qwen3.8-27b:free', via: 'openrouter' },
+  { id: 'google/gemma-4-26b-a4b-it:free', via: 'openrouter' },
+  { id: 'nvidia/nemotron-3-super-120b-a12b:free', via: 'openrouter' },
   { id: 'nvidia/nemotron-3.5-lightning:free', via: 'openrouter' },
   { id: 'google/gemma-4-31b-it:free', via: 'openrouter' },
-  { id: 'openrouter/free', via: 'openrouter' },
-  { id: 'openai', via: 'pollinations' },
+  { id: 'liquid/lfm-2.5-2.6b:free', via: 'openrouter' },
+  { id: 'apodex/apodex-1.1-mini:free', via: 'openrouter' },
   // Contoh bila owner sudah punya key Groq (tambah env + uncomment):
   // { id: 'qwen/qwen3.8-27b', via: 'groq' },
+  { id: 'openrouter/free', via: 'openrouter' },
+  { id: 'openai', via: 'pollinations' },
 ];
 
 // Guard: cache jawaban (nol biaya untuk pertanyaan berulang).
@@ -261,19 +274,47 @@ async function callPollinations(model, messages) {
 }
 
 // Sanitasi terpusat: buang thinking + deteksi bocor (tiap model gayanya beda).
+// TRAP (11-Okt-2026): model gratisan OpenRouter (openrouter/free = auto-router)
+// sering memuntahkan META output alih-alih jawaban CS:
+//   - "User Safety: safe\nResponse Safety: safe"           (filter safety)
+//   - "According to rules: ..." / "The rule says..."         (reasoning verbatim)
+//   - "System prompt: ..." / "Maksud saya..."                (injeksi balik)
+// `throw` = penanda bocor → pool lanjut ke model berikutnya.
+// Retri: pernah lolos ke produksi 2 dari 4 request; selalu uji 4x sebelum fix dianggap benar.
 function bersihJawaban(raw) {
   let text = String(raw || '').trim();
   if (!text) throw new Error('empty');
+  // 1. Buang blok <think>...</think> (qwen3 dkk) — bisa beberapa blok.
   text = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
   if (!text) throw new Error('empty');
+  // 2. Buang blok *Thought*: ... (gaya nemotron) — sampai newline ganda / akhir.
+  text = text.replace(/^\s*\*?\*?(?:Thought|Reasoning|Analysis)\*?\*?\s*:[\s\S]*?(?=\n\s*\n|$)/i, '').trim();
+  // 3. Buang baris-baris meta filter di awal (safety classifier):
+  //    "User Safety: safe", "Response Safety: safe", "Safety: safe", "Rating: safe".
+  //    Hanya baris meta itself (satu baris), BUKAN sampai newline ganda —
+  //    [\s\S]*? serakah dan bisa menelan seluruh jawaban tersisa.
+  text = text.replace(/^(?:user\s*safety|response\s*safety|safety|rating)\s*:\s*\w+[^\n]*\n?/gim, '').trim();
+  if (!text) throw new Error('empty');
+  // 4. Deteksi bocoran reasoning/introspeksi yang tersisa (bisa di mana saja, ID+EN).
   const LEAK_MARKERS = [
     'the user said', 'the user says', "user's intent", 'user intent',
     'analysis of', 'according to the system', 'according to my instructions',
+    'according to rules', 'the rule says', 'rules say', 'my instructions',
     'my reasoning', 'thinking process', 'proses berpikir', 'langkah berpikir',
     'analyze user input', 'sebagai model ai', 'as an ai model', '<think',
+    'user safety', 'response safety', 'safety: safe', 'rating: safe',
+    'system prompt', 'initial prompt', 'instruksi sistem', 'prompt sistem',
+    'maksud saya', 'maksud pengguna', 'system message', 'developer message',
   ];
   const low = text.toLowerCase();
   if (LEAK_MARKERS.some((m) => low.includes(m))) throw new Error('reasoning-leak');
+  // 5. Benteng terakhir: jawaban CS yang sah tidak mengutip aturan internal.
+  //    Frasa-fraza ini hanya muncul di aturanJawab(), tidak pernah di jawaban pelanggan.
+  //    JANGAN pakai pola generik seperti "aturan ini" — CS sah bisa berkata
+  //    "Aturan ini berlaku untuk semua pelanggan" (verifikasi: false positive di test).
+  if (/(?:sesuai|melarang|berdasarkan) aturan(?: saya| jawab)?/i.test(text)) throw new Error('reasoning-leak');
+  if (/aturan (?:jawab|wajib)/i.test(text)) throw new Error('reasoning-leak');
+  if (/\b(?:MAKSIMAL|maksimal) \d+ (?:kalimat|kata)/i.test(text)) throw new Error('rule-verbatim');
   return text;
 }
 
@@ -350,7 +391,7 @@ function aturanJawab(nama) {
     'Kenali sinyal beli (mau pesan, minat, tanya bayar/transfer/dp/diskon, kapan mulai): langsung arahkan closing — ' +
     `sebut langkah berikutnya (halaman pemesanan ${BOOKING_URL} atau kontak ${KONTAK}) dan minta nama + WA dengan tegas tapi sopan. ` +
     'Atasi keberatan dengan fakta: mahal/uang kurang → sebut paket termurah dulu (Starter, website saja) + ' +
-    'bandingkan jasa lain Rp 1,5–5 jt dan agensi Rp 15–40 jt, kami sekali bayar semua termasuk; ' +
+    'bandingkan jasa lain Rp 1,5–5 jt dan agensi Rp 15–40 jt, harga kami sudah termasuk semua; ' +
     'lama → online 3–14 hari; ragu → konsultasi gratis tanpa komitmen; ' +
     'minta pikir-pikir → tawarkan kirim ringkasan via WA (minta nomornya). ' +
     'Sapaan "kak" — hangat tapi tetap sopan, tanpa emoji berlebihan. ' +
@@ -538,6 +579,7 @@ export async function POST(req) {
   let reply = null;
   let modelUsed = null;
   let lastErr = null;
+  let leakCount = 0;
   for (const entry of POOL) {
     try {
       reply = await callModel(entry, messages);
@@ -545,17 +587,30 @@ export async function POST(req) {
       break;
     } catch (e) {
       lastErr = e;
+      // TRAP (11-Okt-2026): `reasoning-leak`/`rule-verbatim` = jawaban BOCOR.
+      // Sebelum fix, `break`-nya diam-diam lolos — catch hanya mencatat,
+      // reply bocor tetap dikirim ke pengunjung. Wajib: lanjut ke model
+      // berikutnya, jangan pakai yang ini.
+      if (e.message === 'reasoning-leak' || e.message === 'rule-verbatim') {
+        leakCount++;
+        continue;
+      }
+      // Error lain (quota/timeout/model mati): tetap lanjut, dicatat di lastErr.
+      continue;
     }
   }
 
   // 6. AI gagal semua → langsung form kontak (tanpa jaring template).
+  // Bila sebagian besar model memang bocor, fallback kontak adalah jalan
+  // teraman — lebih baik ketahui tim daripada pengunjung baca aturan internal.
   if (!reply) {
+    const alasan = leakCount > 0 ? ` (model memerlukan pengecekan: ${leakCount} bocor)` : '';
     const fallback = `Terima kasih atas pertanyaannya — tim kami balas dalam 5 menit. Atau hubungi langsung: ${KONTAK}.`;
     await db.insert(ChatLog).values({
       id: crypto.randomUUID(),
       tenant: tenant || 'global', message: clean, reply: fallback, mode: 'form',
     }).catch(() => {});
-    return NextResponse.json({ mode: 'form', reply: fallback, error: String(lastErr?.message || lastErr) });
+    return NextResponse.json({ mode: 'form', reply: fallback, error: String(lastErr?.message || lastErr) + alasan });
   }
 
   if (demo) faqCache.set(`${tenant}|${clean.toLowerCase()}`, reply);

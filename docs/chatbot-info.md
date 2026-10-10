@@ -2,7 +2,7 @@
 # File ini dibaca route /api/chat setiap request (dev) / sekali saat start (prod).
 # Tulis fakta saja: produk, harga, alur, dukungan, jangkauan, fakta pembanding.
 
-## Produk & harga (sekali bayar per tahun, tanpa biaya tersembunyi — harga lengkap HANYA di halaman paket, jangan sebut angka)
+## Produk & harga (pembayaran tahunan di depan, tanpa biaya tersembunyi — harga lengkap HANYA di halaman paket, jangan sebut angka)
 - Starter Website: website 8–15 halaman custom (bukan WordPress/template), domain gratis tahun pertama, hosting + SSL, SEO dasar. Tanpa CS otomatis.
 - Business + CS AI: semua Starter + CS AI otomatis yang menjawab pertanyaan umum dan mencatat nama + WhatsApp.
 - Full Automation (harga custom, hubungi kami): semua Business + booking otomatis dan panel pemilik.
@@ -21,7 +21,7 @@ Website dan domain atas nama pemilik usaha. Revisi sepuasnya, update konten tiap
 Melayani seluruh Indonesia, 100% online tanpa tatap muka.
 
 ## Fakta pembanding (untuk keberatan "mahal")
-- Jasa lain Rp 1,5–5 jt, agensi Rp 15–40 jt — kami mulai Rp 1,2 jt/thn sekali bayar, semua termasuk.
+- Jasa lain Rp 1,5–5 jt, agensi Rp 15–40 jt — kami mulai Rp 1,2 jt/thn, semua termasuk.
 
 ## Manfaat per jenis usaha (sesuaikan jawaban dengan usaha pengunjung)
 - Resto: reservasi + menu online. Klinik: pendaftaran + jadwal. Properti/kos: katalog + survei.

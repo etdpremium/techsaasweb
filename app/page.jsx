@@ -15,7 +15,7 @@ export const metadata = {
   title: {
     absolute: 'Jasa Pembuatan Website Murah + Chatbot CS AI Otomatis — TechSaaSWeb',
   },
-  description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari, mulai Rp 1,2 juta.',
+  description: 'Jasa pembuatan website custom untuk usaha Anda — chatbot CS AI otomatis, domain, hosting, dan SSL sudah termasuk. Online 3–14 hari.',
   alternates: { canonical: '/' },
 };
 
@@ -113,7 +113,7 @@ export default function Home() {
           <p className="lead">
             Website custom 8–15 halaman untuk usaha Anda, gratis domain tahun
             pertama, plus chatbot CS AI otomatis yang menjawab pelanggan setiap
-            hari. Online 3–14 hari, mulai Rp 1,2 juta sekali bayar.
+            hari. Online 3–14 hari.
           </p>
           <div className="hero-ctas">
             <a href="/services" className="m-btn">Lihat Layanan</a>
@@ -256,7 +256,15 @@ export default function Home() {
         <WallOfLove />
       </Reveal>
 
-      <Reveal as="section" className="section" id="lokasi">
+      {/* SEMBUNYI (11-Okt-2026, permintaan Wafiq): section "Lokasi" (16 kota)
+          + section "Blog — Pelajari website & AI sebelum memesan" tidak ditampilkan
+          di tampilan pertama. Kode + data KOTA_TEASER/KOTA_LAIN/BLOG_TEASER
+          dipertahankan. Nyalakan lagi: ganti `false` -> `true` di bawah.
+          CATATAN SEO: ini menghapus 48 internal link dari homepage (86% link
+          equity ke /jasa-website/* + /blog/*). Halaman kota & blog masih ada
+          di sitemap.xml, tapi lebih lambat di-crawl. */}
+      {false && (
+        <Reveal as="section" className="section" id="lokasi">
         <div className="sec-head center">
           <span className="kicker">Lokasi</span>
           <h2>Jasa pembuatan website untuk kota Anda</h2>
@@ -282,6 +290,7 @@ export default function Home() {
           {' '}— <a href="/jasa-website">semua {CITIES.length} kota</a>.
         </p>
       </Reveal>
+      )}
 
       <Reveal as="section" className="section faq-sec">
         <div className="sec-head center">
@@ -292,7 +301,10 @@ export default function Home() {
         <Faq />
       </Reveal>
 
-      <Reveal as="section" className="section" id="artikel">
+      {/* SEMBUNYI (11-Okt-2026): section Blog teaser di homepage.
+          Lihat catatan SEO di blok "Lokasi" di atas. Nyalakan: false -> true. */}
+      {false && (
+        <Reveal as="section" className="section" id="artikel">
         <div className="sec-head center">
           <span className="kicker">Blog</span>
           <h2>Pelajari website &amp; AI sebelum memesan</h2>
@@ -308,6 +320,7 @@ export default function Home() {
           ))}
         </div>
       </Reveal>
+      )}
 
       <Reveal as="section">
         <div className="newsletter-band">
