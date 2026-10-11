@@ -751,7 +751,15 @@ table.compare td:first-child { font-weight: 600; color: var(--ink); }
 .price-card.hot .price-badge { background: linear-gradient(135deg, var(--primary), var(--accent-violet)); }
 .price-badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--ink); color: #fff; font-size: .76rem; font-weight: 700; padding: .3rem .9rem; border-radius: 100px; white-space: nowrap; }
 .price-card .name { font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--plan, var(--primary)); }
-.price-card .amt { font-family: var(--font-head), "Plus Jakarta Sans", system-ui, sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--ink); line-height: 1; }
+.price-card .amt { font-family: var(--font-head), "Plus Jakarta Sans", system-ui, sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--ink); line-height: 1; white-space: nowrap; }
+/* MOBILE (<=700px): harga sejajar antar card — "Rp 2.500.000" muat 1 baris,
+   padding card dirampingkan supaya gak makan layar. Card tetap 1 kolom
+   (gak ditumpuk berdampingan) supaya list fitur gak sempit. */
+@media (max-width: 700px) {
+  .price-card { padding: 1.3rem; }
+  .price-card .amt { font-size: clamp(1.9rem, 8.4vw, 2.4rem); letter-spacing: -.01em; }
+  .price-grid { gap: 1.1rem; }
+}
 .price-card .amt small { font-size: 1rem; font-weight: 500; color: var(--muted); }
 .price-card .for { font-size: .88rem; color: var(--muted); }
 .price-card ul { list-style: none; padding: 0; margin: .5rem 0 0; display: flex; flex-direction: column; gap: .5rem; font-size: .9rem; }
