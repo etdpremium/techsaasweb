@@ -19,6 +19,7 @@ export default async function sitemap() {
     { url: `${base}/blog`, lastModified: new Date() },
     { url: `${base}/jasa-website` },
     ...CITIES.map((c) => ({ url: `${base}/jasa-website/${c.slug}` })),
+    { url: `${base}/demos`, lastModified: new Date() },
     ...demos.map((d) => ({ url: `${base}/demos/${d.slug}` })),
     ...posts.map((p) => ({
       url: `${base}/blog/${p.slug}`,
