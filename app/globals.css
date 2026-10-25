@@ -739,6 +739,11 @@ table.compare th { background: var(--panel2); color: var(--ink); font-family: va
 table.compare td:first-child { font-weight: 600; color: var(--ink); }
 .yes { color: var(--ok); font-weight: 700; }
 .no { color: #B8BCC9; }
+/* Warisan: centang lebih pudar + miring — "didapat dari paket di bawahnya".
+   Hanya dipakai di tabel "Bandingkan paket berdampingan". */
+.inherit { color: #8ED3AE; font-weight: 600; }
+.ck-inherit { display: inline-block; transform: rotate(-8deg); opacity: .8; }
+.ck-none { color: #B8BCC9; }
 .tbl-wrap { overflow-x: auto; border-radius: var(--radius); box-shadow: var(--shadow-sm); }
 
 /* ---- pricing (microns-style with toggle) ---- */

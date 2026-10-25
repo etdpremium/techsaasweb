@@ -1,6 +1,6 @@
 'use client';
-import { useState } from 'react';
-import { tiers, CONTACT_HREF } from '../../lib/pricing';
+import { useState, Fragment } from 'react';
+import { tiers, CONTACT_HREF, expandInheritedByCat } from '../../lib/pricing';
 import Reveal from '../../components/Reveal';
 import { rupiahFull } from '../../lib/format';
 
@@ -74,35 +74,81 @@ export default function Pricing() {
 
       <Reveal className="m-card" style={{ marginTop: '2rem' }}>
         <h2 style={{ marginBottom: '.8rem' }}>Bandingkan paket berdampingan</h2>
+        {/* Legenda centang: solid = fitur paket itu sendiri, pudar = diwarisi
+            dari paket di bawahnya (Business mewarisi Starter; Full Automation
+            mewarisi Starter + Business). */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.1rem', fontSize: '.8rem', color: 'var(--muted)', marginBottom: '1rem' }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
+            <span className="ck-solid">✓</span> fitur paket ini
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
+            <span className="ck-inherit">✓</span> diwarisi dari paket di bawahnya
+          </span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '.4rem' }}>
+            <span className="ck-none">—</span> tidak termasuk
+          </span>
+        </div>
         <div className="tbl-wrap">
           <table className="compare">
             <thead>
               <tr><th>Fitur</th>{tiers.map((t) => <th key={t.id}>{t.name}<br /><span style={{ fontWeight: 400, fontSize: '.85rem' }}>{t.price == null ? 'hubungi kami' : rupiahFull(t.price)}</span></th>)}</tr>
             </thead>
             <tbody>
-              {tiers[0].cats.map((cat) => {
-                const feats = [...new Set(tiers.flatMap((t) => (t.cats.find((c) => c.cat === cat.cat)?.feats || []).map((f) => f.t)))];
-                const rows = [
-                  <tr key={`h-${cat.cat}`}>
-                    <td colSpan={4} style={{ background: 'var(--panel2)', fontWeight: 800 }}>{cat.cat}</td>
-                  </tr>,
-                  ...feats.map((feat) => (
-                    <tr key={feat}>
-                      <td><strong>{feat}</strong></td>
-                      {tiers.map((t) => {
-                        const f = (t.cats.find((c) => c.cat === cat.cat)?.feats || []).find((x) => x.t === feat);
-                        const s = f?.s || '—';
-                        return (
-                          <td key={t.id} className={s === 'Available' ? 'yes' : s === '—' ? 'no' : ''}>
-                            {s === 'Available' ? '✓' : s}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  )),
-                ];
-                return rows;
-              })}
+              {/* Matriks per-kategori: tiap fitur punya status per-paket
+                  (sendiri ✓ / warisan ✓ / —). Urutan baris = paket yang
+                  pertama kali menyediakan fitur itu (Starter → Business →
+                  Full Automation), jadi pembaca lihat "tangga" upgrade. */}
+              {(() => {
+                // expanded[tierId] = array {cat,t,s,from}
+                const expanded = Object.fromEntries(tiers.map((t) => [t.id, expandInheritedByCat(t.id)]));
+                // union kategori, urut dari paket pertama
+                const catSet = [];
+                for (const t of tiers) for (const c of t.cats)
+                  if (!catSet.includes(c.cat)) catSet.push(c.cat);
+                // abai-kan baris ringkasan "Semua di …" (duplikat di tabel expand)
+                const isSummary = (t) => t.startsWith('Semua di ');
+
+                return catSet.map((cat) => {
+                  // union fitur di kategori ini, urut kemunculan pertama
+                  const featSet = [];
+                  for (const t of tiers) {
+                    const c = t.cats.find((x) => x.cat === cat);
+                    if (c) for (const f of c.feats)
+                      if (!isSummary(f.t) && !featSet.includes(f.t)) featSet.push(f.t);
+                  }
+                  const rows = featSet.map((feat) => {
+                    const per = tiers.map((t) => {
+                      const hit = expanded[t.id].find((r) => r.cat === cat && r.t === feat);
+                      return hit ? hit.s : '—';
+                    });
+                    const intro = per.findIndex((s) => s !== '—'); // paket pertama yg punya
+                    return { feat, per, intro };
+                  })
+                  // Sorot baris "tangga": fitur muncul di paket manapun.
+                  // Baris — — — (gak ada di paket manapun) disembunyikan —
+                  // percupa ditampilkan, cuma bikin tabel ribut.
+                  .filter((row) => row.intro !== -1)
+                  .sort((a, b) => a.intro - b.intro);
+
+                  return (
+                    <Fragment key={`h-${cat}`}>
+                      <tr><td colSpan={4} style={{ background: 'var(--panel2)', fontWeight: 800 }}>{cat}</td></tr>
+                      {rows.map((row) => (
+                        <tr key={row.feat}>
+                          <td><strong>{row.feat}</strong></td>
+                          {row.per.map((s, i) => (
+                            <td key={tiers[i].id} className={s === 'Available' ? 'yes' : s === 'inherited' ? 'inherit' : 'no'}>
+                              {s === 'Available' ? <span className="ck-solid">✓</span>
+                                : s === 'inherited' ? <span className="ck-inherit">✓</span>
+                                : <span className="ck-none">—</span>}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </Fragment>
+                  );
+                });
+              })()}
             </tbody>
           </table>
         </div>
